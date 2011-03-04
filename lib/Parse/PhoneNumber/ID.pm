@@ -77,7 +77,8 @@ __END__
  my $phone = $res->[2];
  dd $phone; # { is_cellular => 1, cellular_operator => 'telkom',
             #   cellular_product => 'flexi', area_code => '021',
-            #   area => 'jakarta', local_number => '71234567', }
+            #   area => 'jakarta', local_number => '71234567',
+            #   country=>'Indonesia', country_code=>'62', }
 
  $res = extract_id_phones(text => 'some text containing phone number(s):
                                    0812 2345 6789, +62-22-91234567');
