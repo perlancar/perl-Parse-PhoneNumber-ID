@@ -75,10 +75,10 @@ __END__
  my $res = parse_id_phone(number => '7123 4567', default_area_code=>'021');
  $res->[0] == 200 or die "Can't parse phone number";
  my $phone = $res->[2];
- dd $phone; # { is_cellular => 1, cellular_operator => 'telkom',
-            #   cellular_product => 'flexi', area_code => '021',
-            #   area => 'jakarta', local_number => '71234567',
-            #   country=>'Indonesia', country_code=>'62', }
+ dd $phone; # { raw => '7123 4567', is_cell => 1, cell_op => 'telkom',
+            #   cell_prod => 'flexi', area_code => '021',
+            #   area => 'jakarta', local_num => '71234567',
+            #   country=>'Indonesia', country_code=>'62', ext=>undef, }
 
  $res = extract_id_phones(text => 'some text containing phone number(s):
                                    0812 2345 6789, +62-22-91234567');
