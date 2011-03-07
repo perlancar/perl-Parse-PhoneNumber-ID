@@ -46,6 +46,12 @@ my %data = (
     #N.EYES & MP320/BMW/JAZZ/|INV/AVZ/APV:08122121135
     #0813.8080|1549;BANDUNG/022-72249239
     #Soekarno Hatta 45-61151901
+    # Foo 750/1130|71123030    <-- 750/1130 is price
+
+    # strategy for extract: use several regex/iterations, from strictest (and
+    # find only at the bottom lanes, for classified ads) to looser and looser.
+    # stop when max number of wanted numbers are reached. or only search using
+    # some regexes.
 );
 
 test_parse(
