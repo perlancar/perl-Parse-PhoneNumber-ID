@@ -409,6 +409,7 @@ my %cell_prefixes = (
     '0899'  => {operator=>'three',                                   is_gsm=>1},
 );
 
+# TODO: mobile area code, telkomsel (and indosat etc too?)
 #10-14 Jabotabek
 #15-32 Jabar
 #33-38 Jateng
@@ -505,7 +506,9 @@ sub extract_id_phones {
     my $level = $args{level} // 5;
     my $defac = $args{default_area_code};
 
-    my %nums;  # normalized num => {level=>..., order=>..., raw=>..., ...}
+    $log->tracef("text = %s", $text);
+
+    my %nums;  # normalized num => {_level=>..., _order=>..., raw=>..., ...}
 
     # note: capital prefix means it has capturing group
     state $_Cc_prefix_local;
@@ -513,48 +516,87 @@ sub extract_id_phones {
     state $_Cc_karea_local_ext;
     state $_Karea_local_ext;
     state $_Prefix_local;
+    state $_Klocal;
     state $_Local;
     state $_Indicator;
     state $_sep;
+    state $_start_w;
+    state $_start_d;
+    state $_end_d;
+    state $_Adjacent;
     if (!$_Prefix_local) {
         # known prefixes
-        my $_kprefix =
-            '(?:'.join("|",keys %area_codes, keys %cell_prefixes).')';
-        my $_karea   = '(?:'.join("|",keys %area_codes).')';
+        $_start_w     = '(?:\A|\b)';
+        $_start_d     = '(?:\A|(?<=\D))';
+        $_end_d       = '(?:\z|(?=\D))';
+        my $_kprefix  =
+            '(?:'.join("|",sort(keys %area_codes, keys %cell_prefixes)).')';
+        my $_karea    = '(?:'.join("|",sort keys %area_codes).')';
+        my @_kareanz;
+        for (keys %area_codes) { s/^0//; push @_kareanz, $_ }
+        my $_kareanz  = '(?:'.join("|",sort @_kareanz).')';
         # XXX currently ignores 08681
-        my $_prefix   = '(?:0[1-9]\s*(?:[0-9]\s*){1,2})';
-        my $_prefixnz = '(?:[1-9]\s*(?:[0-9]\s*){1,2})';
+        my $_prefix   = '(?:0[1-9](?:[0-9]){1,2})';
+        my $_prefixnz = '(?:[1-9](?:[0-9]){1,2})';
         $_sep         = '(?:\s+|\.|-)';
-        my $_cc       = '(?:\+?[1-9][0-9]{1,2})';
+        my $_cc       = '(?:\+[1-9][0-9]{1,2})';
 
         $_Local       = '(\d{5,8}|(?:\d'.$_sep.'?){4,7}\d)';
+
+        # heuristic: we know that is FWA is 7-8 digits, there is no prefix 1
+        # (?). also (not for exact reason though, just minimizing false
+        # negatives) be stricter (no in-between seps).
+        my @_klocal;
+        for (keys %fwa_prefixes) {
+            my $l = length($_);
+            push @_klocal, sprintf("%s\\d{%d,%d}", $_, 7-$l, 8-$l);
+        }
+        $_Klocal      = '(' . join("|", @_klocal, '[2-9]{5,7}'). ')';
+
         my $_Ext      =
-            '((?:extension|ekstensi|ext?|ekst?)(?:\s|:|\.)*(?:\d{1,5}))';
+            qr!((?:extension|ekstensi|ext?|ekst?)(?:\s|:|\.)*(?:\d{1,5}))!ix;
 
         $_Kprefix_local = # (021) 123-4567, 021-123-4567
-            qr!(?:\A|\b) (\(\s*$_kprefix\s*\)|$_kprefix) $_sep* $_Local \b!sx;
+            qr!(\(\s*$_kprefix\s*\)|$_kprefix) $_sep* $_Local!sx;
         $_Prefix_local = # same as above, but w/o checking known prefixes
-            qr!(?:\A|\b) (\(\s*$_prefix\s*\)|$_prefix) $_sep* $_Local \b!sx;
+            qr!(\(\s*$_prefix\s*\)|$_prefix) $_sep* $_Local!sx;
         $_Karea_local_ext = # (021) 123-4567 ext 102, mobile assumed has no ext
-            qr!(?:\A|\b) (\(\s*$_karea\s*\)|$_karea)
-               $_sep* $_Local
-               $_sep* $_Ext \b!sx;
-        $_Cc_prefix_local = # (+?62) 22 123-4567, 62 812 123-4567
-            qr!(?:\A|\b) (\(\s*$_cc\s*\)|$_cc) $_sep*
+            qr!(\(\s*$_karea\s*\)|$_karea) $_sep*
+               $_Local $_sep*
+               $_Ext!sx;
+        $_Cc_prefix_local = # (+62) 22 123-4567, 62 812 123-4567
+            qr!(\(\s*$_cc\s*\)|$_cc) $_sep*
                (\(\s*$_prefixnz\s*\)|$_prefixnz) $_sep*
-               $_Local \b!sx;
-        $_Cc_karea_local_ext = # (+?62) 22 123-4567 ext 1000
-            qr!(?:\A|\b) (\(\s*$_cc\s*\)|$_cc) $_sep*
-               (\(\s*$_prefixnz\s*\)|$_prefixnz) $_sep*
-               $_Local $_sep* $_Ext \b!sx;
-        $_Indicator = '(?:\A|\b)(
+               $_Local!sx;
+        $_Cc_karea_local_ext = # (+62) 22 123-4567 ext 1000
+            qr!(\(\s*$_cc\s*\)|$_cc) $_sep*
+               (\(\s*$_kareanz\s*\)|$_kareanz) $_sep*
+               $_Local $_sep*
+               $_Ext!sx;
+        $_Indicator = qr!(
                              menghubungi|hubungi|hub|
+                             contact|kontak|mengontak|mengkontak|
                              nomor|nomer|no|num|
+                             to|ke|
                              tele?pon|tilpun|tilp|te?lp|tel|tl?|
                              phone|ph|
                              handphone|h\.?p|ponsel|cellular|cell|
                              faximile|facsimile|faksimile|fax|facs|faks|f
-                         )\s*[.:]*';
+                         )(?:\s*|\.|:)*!ix;
+        $_Adjacent = qr!(\s*/\s*\d\d?)!;
+    }
+
+    # preprocess text: 0 1 2 3 4 5 -> 012345
+    if ($level >= 6) {
+        state $_remove_spaces = sub {
+            local $_ = shift;
+            s/\s//sg;
+            $_;
+        };
+        my $oldtext = $text;
+        $text =~ s/((?:\d\s){4,}\d)/$_remove_spaces->($1)/seg;
+        $log->tracef("Preprocess text: remove spaces: %s", $text)
+            if $oldtext ne $text;
     }
 
     # preprocess text: O (letter O) as 0 and l/I/| as 1
@@ -569,7 +611,7 @@ sub extract_id_phones {
         };
         my $oldtext = $text;
         $text =~ s/((?:[0-9$lets](?:\s+|-|\.)?){5,})/$_replace_lets->($1)/eg;
-        $log->tracef("Preprocess text: letter->nums: %s", $text)
+        $log->tracef("Preprocess text: letters->digits: %s", $text)
             if $oldtext ne $text;
     }
 
@@ -582,69 +624,98 @@ sub extract_id_phones {
     # T.blah, etc.
     if ($level >= 1) {
         $i = 0; @r = ();
-        while ($text =~ m!($_Indicator $_sep* $_Cc_karea_local_ext)!xg) {
+        while ($text =~ m!($_start_w $_Indicator $_sep*
+                              $_Cc_karea_local_ext $_end_d)!xg) {
             push @r, $1;
             my $ind = $2;
             my $num = _normalize($3, $4, $5, $6);
             $nums{$num} //= {_level=>2, _order=>++$i, raw=>$1,
                              _pat=>"ind+cc+karea+local+ext"};
-            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/;
+            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/i;
         }
         _remove_text(\$text, \@r);
 
         $i = 0; @r = ();
-        while ($text =~ m!($_Indicator $_sep* $_Cc_prefix_local)!xg) {
+        while ($text =~ m!($_start_w $_Indicator $_sep*
+                              $_Cc_prefix_local $_end_d)!xg) {
             push @r, $1;
             my $ind = $2;
             my $num = _normalize($3, $4, $5);
             $nums{$num} //= {_level=>2, _order=>++$i, raw=>$1,
                              _pat=>"ind+cc+prefix+local"};
-            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/;
+            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/i;
         }
         _remove_text(\$text, \@r);
 
         $i = 0; @r = ();
-        while ($text =~ m!($_Indicator $_Karea_local_ext)!xg) {
+        while ($text =~ m!($_start_w $_Indicator $_Karea_local_ext
+                              $_end_d)!xg) {
             push @r, $1;
             my $ind = $2;
             my $num = _normalize(undef, $3, $4, $5);
             $nums{$num} //= {_level=>1, _order=>++$i, raw=>$1,
                              _pat=>"ind+karea+local+ext"};
-            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/;
+            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/i;
         }
         _remove_text(\$text, \@r);
 
         $i = 0; @r = ();
-        while ($text =~ m!($_Indicator $_Kprefix_local)!xg) {
+        while ($text =~ m!($_start_w $_Indicator $_Kprefix_local
+                              $_Adjacent? $_end_d)!xg) {
             push @r, $1;
             my $ind = $2;
             my $num = _normalize(undef, $3, $4);
+            my $adj = $5;
             $nums{$num} //= {_level=>1, _order=>++$i, raw=>$1,
                              _pat=>"ind+kprefix+local"};
             $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/;
+            _add_adjacent(\%nums, $num, $adj);
         }
         _remove_text(\$text, \@r);
     }
     if ($level >= 2) {
         $i = 0; @r = ();
-        while ($text =~ m!($_Indicator $_sep* $_Prefix_local)!xg) {
+        while (defined($defac) &&
+                   $text =~ m!($_start_w $_Indicator $_sep* $_Klocal
+                                  $_Adjacent? $_end_d)!xg) {
+            push @r, $1;
+            my $ind = $2;
+            my $num = _normalize(undef, $defac, $3);
+            my $adj = $4;
+            $nums{$num}  //= {_level=>2, _order=>++$i, raw=>$1,
+                              _pat=>"ind+klocal"};
+            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/i;
+            _add_adjacent(\%nums, $num, $adj);
+        }
+        _remove_text(\$text, \@r);
+    }
+    if ($level >= 2) {
+        $i = 0; @r = ();
+        while ($text =~ m!($_start_w $_Indicator $_sep* $_Prefix_local
+                          $_Adjacent? $_end_d)!xg) {
             push @r, $1;
             my $ind = $2;
             my $num = _normalize(undef, $3, $4);
+            my $adj = $5;
             $nums{$num}  //= {_level=>2, _order=>++$i, raw=>$1,
                               _pat=>"ind+prefix+local"};
-            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/;
+            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/i;
+            _add_adjacent(\%nums, $num, $adj);
         }
         _remove_text(\$text, \@r);
 
         $i = 0; @r = ();
-        while (defined($defac) && $text =~ m!($_Indicator $_sep* $_Local)!xg) {
+        while (defined($defac) &&
+                   $text =~ m!($_start_w $_Indicator $_sep* $_Local
+                              $_Adjacent? $_end_d)!xg) {
             push @r, $1;
             my $ind = $2;
             my $num = _normalize(undef, $defac, $3);
+            my $adj = $4;
             $nums{$num}  //= {_level=>2, _order=>++$i, raw=>$1,
                               _pat=>"ind+local"};
-            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/;
+            $nums{$num}{is_fax} = 1 if $ind =~ /fax|faks|\bf\b/i;
+            _add_adjacent(\%nums, $num, $adj);
         }
         _remove_text(\$text, \@r);
     }
@@ -652,7 +723,7 @@ sub extract_id_phones {
     # try to find any cc+area+local numbers
     if ($level >= 3) {
         $i = 0; @r = ();
-        while ($text =~ m!($_Cc_karea_local_ext)!xg) {
+        while ($text =~ m!($_start_d $_Cc_karea_local_ext $_end_d)!xg) {
             push @r, $1;
             $nums{_normalize($2, $3, $4, $5)} //=
                 {_level=>3, _order=>++$i, raw=>$1, _pat=>"cc+karea+local+ext"};
@@ -660,7 +731,7 @@ sub extract_id_phones {
         _remove_text(\$text, \@r);
 
         $i = 0; @r = ();
-        while ($text =~ m!($_Cc_prefix_local)!xg) {
+        while ($text =~ m!($_start_d $_Cc_prefix_local $_end_d)!xg) {
             push @r, $1;
             $nums{_normalize($2, $3, $4)} //=
                 {_level=>3, _order=>++$i, raw=>$1, _pat=>"cc+prefix+local"};
@@ -671,10 +742,28 @@ sub extract_id_phones {
     # try to find numbers with known area code/cell number prefixes
     if ($level >= 3) {
         $i = 0; @r = ();
-        while ($text =~ m!($_Kprefix_local)!xg) {
+        while ($text =~ m!($_start_d $_Kprefix_local $_Adjacent? $_end_d)!xg) {
             push @r, $1;
-            $nums{_normalize(undef, $2, $3)} //=
+            my $num = _normalize(undef, $2, $3);
+            my $adj = $4;
+            $nums{$num} //=
                 {_level=>3, _order=>++$i, raw=>$1, _pat=>"kprefix+local"};
+            _add_adjacent(\%nums, $num, $adj);
+        }
+        _remove_text(\$text, \@r);
+    }
+
+    if ($level >= 5) {
+        $i = 0; @r = ();
+        while (defined($defac) &&
+                   $text =~ m!($_start_w $_Klocal
+                                  $_Adjacent? $_end_d)!xg) {
+            push @r, $1;
+            my $num = _normalize(undef, $defac, $2);
+            my $adj = $3;
+            $nums{$num}  //= {_level=>2, _order=>++$i, raw=>$1,
+                              _pat=>"klocal"};
+            _add_adjacent(\%nums, $num, $adj);
         }
         _remove_text(\$text, \@r);
     }
@@ -682,9 +771,13 @@ sub extract_id_phones {
     # try to find any area+local numbers
     if ($level >= 5) {
         $i = 0; @r = ();
-        while ($text =~ m!($_Prefix_local)!xg) {
-            $nums{_normalize(undef, $2, $3)} //=
+        while ($text =~ m!($_start_d $_Prefix_local $_Adjacent? $_end_d)!xg) {
+            push @r, $1;
+            my $num = _normalize(undef, $2, $3);
+            my $adj = $4;
+            $nums{$num} //=
                 {_level=>5, _order=>++$i, raw=>$1, _pat=>"prefix+local"};
+            _add_adjacent(\%nums, $num, $adj);
         }
         _remove_text(\$text, \@r);
     }
@@ -694,10 +787,13 @@ sub extract_id_phones {
     # in smaller cities)
     if ($level >= 5 && defined($defac)) {
         $i = 0; @r = ();
-        while ($text =~ m!($_Local)!xg) {
+        while ($text =~ m!($_start_d $_Local $_Adjacent? $_end_d)!xg) {
             push @r, $1;
-            $nums{_normalize(undef, $defac, $1)} //=
-                {level=>5, order=>++$i, raw=>$1, pat=>"local (defac)"};
+            my $num = _normalize(undef, $defac, $2);
+            my $adj = $3;
+            $nums{$num} //=
+                {_level=>5, _order=>++$i, raw=>$1, _pat=>"local (defac)"};
+            _add_adjacent(\%nums, $num, $adj);
         }
         _remove_text(\$text, \@r);
     }
@@ -709,14 +805,18 @@ sub extract_id_phones {
     # the ones at the end (they are more likely to be numbers, in the case of
     # classified ads)
     my @nums = map { $nums{$_} } sort {
-        $nums{$a}{level} <=> $nums{$b}{level} ||
-            $nums{$b}{order} <=> $nums{$a}{order}
+        $nums{$a}{_level} <=> $nums{$b}{_level} ||
+            $nums{$b}{_order} <=> $nums{$a}{_order} ||
+                $nums{$b}{standard} cmp $nums{$a}{standard}
     } keys %nums;
     if (defined($args{max_numbers}) && $args{max_numbers} > 0 &&
             @nums > $args{max_numbers}
     ) {
         splice @nums, $args{max_numbers};
     }
+
+    # sort again according to order (ascending), this is what most people expect
+    @nums = sort {$a->{_order} <=> $b->{_order}} @nums;
 
     # remove internal data
     for my $num (@nums) {
@@ -756,7 +856,20 @@ sub _remove_text {
     for (@$strs) {
         $$textref =~ s/\Q$_\E//;
     }
-    $log->tracef("text = %s", $$textref) if $$textref ne $oldtext;
+    $log->tracef("removed match, text = %s", $$textref)
+        if $$textref ne $oldtext;
+}
+
+sub _add_adjacent {
+    my ($nums, $num, $adj) = @_;
+    return unless $adj;
+    $adj =~ s/\D//g;
+    my $first = substr($num, -length($adj));
+    return unless abs($first - $adj) == 1;
+    my $num2 = $num;
+    substr($num2, -length($adj)) = $adj;
+    $nums->{$num2} = clone($nums->{$num});
+    $nums->{$num2}{_order} += 0.5;
 }
 
 sub _add_info {
@@ -793,8 +906,21 @@ sub _add_info {
     }
 
     if (my $a = $area_codes{$prefix}) {
+        $num->{is_land}  = 1;
         $num->{province} = $a->{province};
         $num->{cities}   = $a->{cities};
+        state $_fwa_prefixes;
+        if (!$_fwa_prefixes) {
+            $_fwa_prefixes = '(?:'.join("|", keys %fwa_prefixes).')';
+        }
+        if ($local =~ /^($_fwa_prefixes)/) {
+            my $fwa = $fwa_prefixes{$1};
+            $num->{is_cdma}  = 1;
+            $num->{operator} = $fwa->{operator};
+            $num->{product}  = $fwa->{product};
+        }
+    } else {
+        $num->{is_land}  = 0;
     }
 }
 
