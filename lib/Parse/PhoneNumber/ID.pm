@@ -989,6 +989,11 @@ arguments and positional, run the subroutine from the command line, etc. Refer
 to Sub::Spec documentation for more details.
 
 
+=head1 FUNCTIONS
+
+None are exported by default, but they are exportable.
+
+
 =head1 SEE ALSO
 
 L<Parse::PhoneNumber>
