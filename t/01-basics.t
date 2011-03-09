@@ -29,6 +29,12 @@ my %data = (
     # formatting: two numbers, sequential, shorthand: 7123 4567 / 68
     # formatting: words: nol (de)lapan limaenamsatuduatiga empat lima enam
 
+    # fax
+
+    # fake intl number 65-(022)-23918233
+
+    # ext
+
     # sample texts (| = \n):
     #hny 50rbSpa&Massage,Sunda 71|NewTeraphist+Room,91641176
     #NbDelC2D=2,9AcerAspire+Wbca|m+DVDRW=2,3 T.082115768730
