@@ -451,6 +451,7 @@ our %SPEC;
 my $extract_args = {
     text              => ['str*' => {
         summary => 'Text containing phone numbers to extract from',
+        arg_pos => 0,
     }],
     max_numbers       => 'int',
     default_area_code => ['str' => {
