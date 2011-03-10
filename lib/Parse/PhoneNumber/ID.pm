@@ -949,13 +949,14 @@ __END__
  use Parse::PhoneNumber::ID qw(parse_id_phone extract_id_phones);
  use Data::Dump;
 
- dd parse_id_phone(text => '7123 4567', default_area_code=>'022');
+ dd parse_id_phone(text => 'Jual dalmatian 2bl lucu2x. Hub: 7123 4567',
+                   default_area_code=>'022');
 
 Will print something like:
 
- { raw          => '7123 4567',
-   pretty       => '(022) 7123-4567',
-   standard     => '+622271234567',
+ { raw          => 'Hub: 7123 4567',
+   pretty       => '022-7123-4567',
+   standard     => '+62.22.71234567',
    is_cell      => 1,
    is_gsm       => 0,
    is_cdma      => 1,
