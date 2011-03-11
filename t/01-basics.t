@@ -156,7 +156,7 @@ my %sample_data = (
     "N.EYES & MP320/BMW/JAZZ/\nINV/AVZ/APV:08122121135" => ['+62.812.2121135'],
     "0813.8080\n1549;BANDUNG/022-72249239" => ['+62.813.80801549', '+62.22.72249239'], # num separated by newline
     "Soekarno Hatta 45-61151901" => ['+62.22.61151901'], # klocal before prefix+local
-    "MB/Proc 750/1130\n71123030" => ['+62.22.71123030'], # 750/1130 is price (in thousand Rp). TODO: this is also currently ambiguous.
+    "MB/Proc 750/1130\n71123030" => ['+62.22.71123030'], # 750/1130 is price (in thousand Rp).
 );
 for my $t (sort keys %sample_data) {
     my $t_ = $t; $t_ =~ s/\n/\\n/g;
