@@ -1,5 +1,10 @@
 Revision history for Parse-PhoneNumber-ID
 
+0.04    2011-03-15
+
+        Declare requirement Test::More 0.96.
+
+
 0.03    2011-03-15
 
         Add missing requirement to 'Log::Any'.
