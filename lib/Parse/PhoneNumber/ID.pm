@@ -11,7 +11,7 @@ our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(extract_id_phones parse_id_phone
                     list_id_operators list_id_area_codes);
 
-use Clone::Any qw(clone);
+use Data::Clone qw(clone);
 
 # from: http://id.wikipedia.org/wiki/Daftar_kode_telepon_di_Indonesia
 # last updated: 2011-03-08
