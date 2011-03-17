@@ -1,5 +1,10 @@
 Revision history for Parse-PhoneNumber-ID
 
+0.05    2011-03-17
+
+        Replace Clone::Any with Data::Clone.
+
+
 0.04    2011-03-15
 
         Declare requirement Test::More 0.96.
