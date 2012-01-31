@@ -438,6 +438,7 @@ my %fwa_prefixes = (
     77 => {operator=>'telkom', product=>'flexi'},
 
     80 => {operator=>'esia'},
+    89 => {operator=>'esia'},
     83 => {operator=>'esia'},
     91 => {operator=>'esia'},
     92 => {operator=>'esia'},
