@@ -1,5 +1,10 @@
 Revision history for Parse-PhoneNumber-ID
 
+0.06    2012-01-31
+
+        Add prefix for esia (89).
+
+
 0.05    2011-03-17
 
         Replace Clone::Any with Data::Clone.
