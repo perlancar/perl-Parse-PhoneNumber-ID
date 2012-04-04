@@ -981,20 +981,11 @@ To extract more than one numbers in a text:
 
 =head1 DESCRIPTION
 
-This module can extract/parse Indonesian phone numbers. See extract_id_phones()
-for more details.
+This module provides parse_id_phone() and extract_id_phones().
 
-This module uses L<Log::Any> logging framework, so you can use something like
-L<Log::Any::App> to easily show more logging output during debugging.
+This module uses L<Log::Any> logging framework.
 
-This module uses L<Sub::Spec> framework, so you can switch between named
-arguments and positional, run the subroutine from the command line, etc. Refer
-to Sub::Spec documentation for more details.
-
-
-=head1 FUNCTIONS
-
-None are exported by default, but they are exportable.
+This module has L<Rinci> metadata.
 
 
 =head1 SEE ALSO
