@@ -450,23 +450,33 @@ my %fwa_prefixes = (
 our %SPEC;
 
 my $extract_args = {
-    text              => ['str*' => {
-        summary => 'Text containing phone numbers to extract from',
-        arg_pos => 0,
-    }],
-    max_numbers       => 'int',
-    default_area_code => ['str' => {
+    text => {
+        summary     => 'Text containing phone numbers to extract from',
+        schema      => 'str*',
+        req         => 1,
+        pos         => 0,
+    },
+    max_numbers => {
+        schema      => 'int',
+    },
+    default_area_code => {
         summary     => 'When encountering a number without area code, use this',
+        schema      => ['str' => {
+            match   => qr/^0\d{2,3}$/,
+        }],
         description => <<'_',
 
 If you want to extract numbers that doesn't contain area code (e.g. 7123 4567),
 you'll need to provide this.
 
 _
-        match   => qr/^0\d{2,3}$/,
-    }],
-    level             => ['int' => {
+    },
+    level             => {
         summary     => 'How hard should the function extract numbers (1-9)',
+        schema      => ['int' => {
+            default     => 5,
+            between     => [1, 9],
+        }],
         description => <<'_',
 
 The higher the level, the harder this function will try finding phone numbers,
@@ -476,13 +486,11 @@ it might assume, e.g. 1234567890 to be a phone number. Normally leaving level at
 default level is fine.
 
 _
-        default     => 5,
-        ge          => 1,
-        le          => 9,
-    }],
+    },
 };
 
 $SPEC{extract_id_phones} = {
+    v            => 1.1,
     summary      => 'Extract phone number(s) from text',
     description  => <<'_',
 
@@ -834,6 +842,7 @@ sub extract_id_phones {
 my $parse_args = clone($extract_args);
 delete $parse_args->{max_numbers};
 $SPEC{parse_id_phone} = {
+    v            => 1.1,
     summary      => 'Alias for extract_id_phones(..., max_numbers=>1)->[0]',
     args         => $parse_args,
     result_naked => 1,
@@ -927,6 +936,7 @@ sub _add_info {
 }
 
 #$SPEC{list_id_operators} = {
+#    v            => 1.1,
 #    summary      => 'Return list of known phone operators',
 #    result_naked => 1,
 #};
@@ -935,6 +945,7 @@ sub _add_info {
 #}
 
 #$SPEC{list_id_area_codes} = {
+#    v            => 1.1,
 #    summary      => 'Return list of known area codes in Indonesia, '.
 #        'along with area names',
 #    result_naked => 1,
