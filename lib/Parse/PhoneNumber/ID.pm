@@ -1,5 +1,4 @@
 package Parse::PhoneNumber::ID;
-# ABSTRACT: Parse Indonesian phone numbers
 
 use 5.010;
 use strict;
@@ -12,6 +11,8 @@ our @EXPORT_OK = qw(extract_id_phones parse_id_phone
                     list_id_operators list_id_area_codes);
 
 use Data::Clone qw(clone);
+
+# VERSION
 
 # from: http://id.wikipedia.org/wiki/Daftar_kode_telepon_di_Indonesia
 # last updated: 2011-03-08
@@ -954,7 +955,7 @@ sub _add_info {
 #}
 
 1;
-__END__
+# ABSTRACT: Parse Indonesian phone numbers
 
 =head1 SYNOPSIS
 
@@ -988,15 +989,6 @@ To extract more than one numbers in a text:
                                         '0812 2345 6789, +62-22-91234567');
  say "There are ", scalar(@$phones), "phone number(s) found in text";
  for (@$phones) { say $_->{pretty} }
-
-
-=head1 DESCRIPTION
-
-This module provides parse_id_phone() and extract_id_phones().
-
-This module uses L<Log::Any> logging framework.
-
-This module has L<Rinci> metadata.
 
 
 =head1 SEE ALSO
