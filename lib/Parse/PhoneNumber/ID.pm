@@ -420,9 +420,15 @@ my %cell_prefixes = (
 #87-96 Sulawesi
 #97-99 Papua Maluku
 
+# for fwa things are less clear, below is probably incomplete. each city might
+# be different anyway, e.g. 8x (like 87xxxxxx) is used by telkom in jakarta area
+# (east, bekasi, etc) and not esia. things like esia gogo also complicates
+# things.
+
 my %fwa_prefixes = (
     30 => {operator=>'indosat', product=>'starone'},
     32 => {operator=>'telkom', product=>'flexi'},
+    #39 is fixed telcom
     40 => {operator=>'telkom', product=>'flexi'},
     50 => {operator=>'telkom', product=>'flexi'},
     60 => {operator=>'indosat', product=>'starone'},
@@ -433,11 +439,19 @@ my %fwa_prefixes = (
     72 => {operator=>'telkom', product=>'flexi'},
     77 => {operator=>'telkom', product=>'flexi'},
     80 => {operator=>'esia'},
+    81 => {operator=>'esia'}, # jkt
     83 => {operator=>'esia'},
+    85 => {operator=>'esia'}, # jkt
+    87 => {operator=>'esia'}, # jkt
     89 => {operator=>'esia'},
+    90 => {operator=>'esia'}, # assumed 9x
     91 => {operator=>'esia'},
     92 => {operator=>'esia'},
     93 => {operator=>'esia'},
+    94 => {operator=>'esia'}, # assumed 9x
+    95 => {operator=>'esia'}, # assumed 9x
+    96 => {operator=>'esia'}, # assumed 9x
+    97 => {operator=>'esia'}, # assumed 9x
     98 => {operator=>'esia'},
     99 => {operator=>'esia'},
 );
