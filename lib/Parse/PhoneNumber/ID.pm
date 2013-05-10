@@ -1,6 +1,6 @@
 package Parse::PhoneNumber::ID;
 
-use 5.010;
+use 5.010001;
 use strict;
 use warnings;
 use Log::Any '$log';
@@ -10,7 +10,7 @@ our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(extract_id_phones parse_id_phone
                     list_id_operators list_id_area_codes);
 
-use Data::Clone qw(clone);
+use Data::Clone;
 
 # VERSION
 
