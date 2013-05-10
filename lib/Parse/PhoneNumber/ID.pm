@@ -440,10 +440,13 @@ my %fwa_prefixes = (
     77 => {operator=>'telkom', product=>'flexi'},
     80 => {operator=>'esia'},
     81 => {operator=>'esia'}, # jkt
+    82 => {operator=>'esia'}, # assumed 8x
     83 => {operator=>'esia'},
+    84 => {operator=>'esia'}, # assumed 8x
     85 => {operator=>'esia'}, # jkt
-    86 => {operator=>'esia'}, # assumed
+    86 => {operator=>'esia'}, # assumed 8x
     87 => {operator=>'esia'}, # jkt
+    88 => {operator=>'esia'}, # assumed 8x
     89 => {operator=>'esia'},
     90 => {operator=>'esia'}, # assumed 9x
     91 => {operator=>'esia'},
