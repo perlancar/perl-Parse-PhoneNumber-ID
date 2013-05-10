@@ -366,44 +366,35 @@ my %cell_prefixes = (
     '0811'  => {operator=>'telkomsel', product=>'halo',              is_gsm=>1},
     '0812'  => {operator=>'telkomsel', product=>'halo/simpati',      is_gsm=>1},
     '0813'  => {operator=>'telkomsel', product=>'simpati',           is_gsm=>1},
-    '0821'  => {operator=>'telkomsel', product=>'simpati',           is_gsm=>1},
-    '0852'  => {operator=>'telkomsel', product=>'as',                is_gsm=>1},
-    '0853'  => {operator=>'telkomsel', product=>'as',                is_gsm=>1},
-
     '0814'  => {operator=>'indosat',   product=>'matrix',            is_gsm=>1},
     '0815'  => {operator=>'indosat',   product=>'matrix/mentari',    is_gsm=>1},
     '0816'  => {operator=>'indosat',   product=>'matrix/mentari',    is_gsm=>1},
+    '0817'  => {operator=>'xl',                                      is_gsm=>1},
+    '0818'  => {operator=>'xl',                                      is_gsm=>1},
+    '0819'  => {operator=>'xl',                                      is_gsm=>1},
+    '0821'  => {operator=>'telkomsel', product=>'simpati',           is_gsm=>1},
+    '0828'  => {operator=>'sampoerna', product=>'ceria',             is_gsm=>1},
+    #'08315' => {operator=>'nts',                                     is_gsm=>1},
+    '0831'  => {operator=>'axis',                                    is_gsm=>1},
+    '0832'  => {operator=>'axis',                                    is_gsm=>1},
+    '0838'  => {operator=>'axis',                                    is_gsm=>1},
+    '0852'  => {operator=>'telkomsel', product=>'as',                is_gsm=>1},
+    '0853'  => {operator=>'telkomsel', product=>'as',                is_gsm=>1},
     '0855'  => {operator=>'indosat',   product=>'matrix bright',     is_gsm=>1},
     '0856'  => {operator=>'indosat',   product=>'im3',               is_gsm=>1},
     '0857'  => {operator=>'indosat',   product=>'im3',               is_gsm=>1},
     '0858'  => {operator=>'indosat',   product=>'mentari',           is_gsm=>1},
-
-    '0817'  => {operator=>'xl',                                      is_gsm=>1},
-    '0818'  => {operator=>'xl',                                      is_gsm=>1},
-    '0819'  => {operator=>'xl',                                      is_gsm=>1},
     '0859'  => {operator=>'xl',                                      is_gsm=>1},
+    #'08681' => {operator=>'psn',       product=>'byru',              is_gsm=>0}, # satellite
+    '0868'  => {operator=>'psn',       product=>'byru',              is_gsm=>0}, # satellite
     '0877'  => {operator=>'xl',                                      is_gsm=>1},
     '0878'  => {operator=>'xl',                                      is_gsm=>1},
     '0879'  => {operator=>'xl',                                      is_gsm=>1},
-
-    '0828'  => {operator=>'sampoerna', product=>'ceria',             is_gsm=>1},
-
-    '0831'  => {operator=>'axis',                                    is_gsm=>1},
-    '0832'  => {operator=>'axis',                                    is_gsm=>1},
-    '0838'  => {operator=>'axis',                                    is_gsm=>1},
-
-    #'08315' => {operator=>'nts',                                     is_gsm=>1},
-
-    #'08681' => {operator=>'psn',       product=>'byru',              is_gsm=>0}, # satellite
-    '0868'  => {operator=>'psn',       product=>'byru',              is_gsm=>0}, # satellite
-
     '0881'  => {operator=>'smart',                                   is_cdma=>1},
     '0882'  => {operator=>'smart',                                   is_cdma=>1},
     '0887'  => {operator=>'smart',                                   is_cdma=>1},
-
     '0888'  => {operator=>'mobile8',                                 is_cdma=>1},
     '0889'  => {operator=>'mobile8',                                 is_cdma=>1},
-
     '0896'  => {operator=>'three',                                   is_gsm=>1},
     '0897'  => {operator=>'three',                                   is_gsm=>1},
     '0898'  => {operator=>'three',                                   is_gsm=>1},
@@ -425,22 +416,19 @@ my %cell_prefixes = (
 
 my %fwa_prefixes = (
     30 => {operator=>'indosat', product=>'starone'},
-    60 => {operator=>'indosat', product=>'starone'},
-    62 => {operator=>'indosat', product=>'starone'},
-
+    32 => {operator=>'telkom', product=>'flexi'},
     40 => {operator=>'telkom', product=>'flexi'},
     50 => {operator=>'telkom', product=>'flexi'},
-
-    32 => {operator=>'telkom', product=>'flexi'},
+    60 => {operator=>'indosat', product=>'starone'},
+    62 => {operator=>'indosat', product=>'starone'},
     68 => {operator=>'telkom', product=>'flexi'},
     70 => {operator=>'telkom', product=>'flexi'},
     71 => {operator=>'telkom', product=>'flexi'},
     72 => {operator=>'telkom', product=>'flexi'},
     77 => {operator=>'telkom', product=>'flexi'},
-
     80 => {operator=>'esia'},
-    89 => {operator=>'esia'},
     83 => {operator=>'esia'},
+    89 => {operator=>'esia'},
     91 => {operator=>'esia'},
     92 => {operator=>'esia'},
     93 => {operator=>'esia'},
