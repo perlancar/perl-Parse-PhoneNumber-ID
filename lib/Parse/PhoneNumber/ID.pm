@@ -442,6 +442,7 @@ my %fwa_prefixes = (
     81 => {operator=>'esia'}, # jkt
     83 => {operator=>'esia'},
     85 => {operator=>'esia'}, # jkt
+    86 => {operator=>'esia'}, # assumed
     87 => {operator=>'esia'}, # jkt
     89 => {operator=>'esia'},
     90 => {operator=>'esia'}, # assumed 9x
