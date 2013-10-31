@@ -435,9 +435,24 @@ my %fwa_prefixes = (
     62 => {operator=>'indosat', product=>'starone'},
     68 => {operator=>'telkom', product=>'flexi'},
     70 => {operator=>'telkom', product=>'flexi'},
-    71 => {operator=>'telkom', product=>'flexi'},
-    72 => {operator=>'telkom', product=>'flexi'},
-    77 => {operator=>'telkom', product=>'flexi'},
+    710 => {operator=>'telkom', product=>'flexi'},
+    711 => {operator=>'telkom', product=>'flexi'},
+    712 => {operator=>'telkom', product=>'flexi'},
+    713 => {operator=>'telkom', product=>'flexi'},
+    714 => {operator=>'telkom', product=>'flexi'},
+    715 => {operator=>'telkom', product=>'flexi'},
+    716 => {operator=>'telkom', product=>'flexi'},
+    717 => {}, # land
+    718 => {}, # land
+    719 => {}, # land
+    72 => {}, # land
+    73 => {}, # land
+    74 => {}, # land
+    75 => {}, # land
+    76 => {}, # land
+    77 => {}, # land
+    78 => {}, # land
+    79 => {}, # land
     80 => {operator=>'esia'},
     81 => {operator=>'esia'}, # jkt
     82 => {operator=>'esia'}, # assumed 8x
