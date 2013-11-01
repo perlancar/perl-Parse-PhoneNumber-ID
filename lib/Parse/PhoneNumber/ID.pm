@@ -1022,6 +1022,10 @@ To extract more than one numbers in a text:
 
 Need to update with more prefixes.
 
+Data needs to be cleaned up (especially city names to city codes) and moved to
+GudangData project.
+
+
 =head1 SEE ALSO
 
 L<Parse::PhoneNumber>
