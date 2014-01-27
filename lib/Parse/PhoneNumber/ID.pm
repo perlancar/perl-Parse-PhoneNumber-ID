@@ -858,7 +858,7 @@ sub extract_id_phones {
 
     # remove internal data
     for my $num (@nums) {
-        for (keys %$num) { delete $num->{$_} if /^_/ }
+        #for (keys %$num) { delete $num->{$_} if /^_/ }
         _add_info($num);
     }
 
