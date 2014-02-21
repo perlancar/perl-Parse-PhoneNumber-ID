@@ -1,5 +1,10 @@
 Revision history for Parse-PhoneNumber-ID
 
+0.10    2014-02-21 (SHARYANTO)
+
+        - Update data: mobile8 is renamed to smartfren since Apr 2011.
+
+
 0.09    2013-11-01 (SHARYANTO)
 
         - Update data: 70- & 710-716 is flexi, but 717-719, 72-79 is telkom land
