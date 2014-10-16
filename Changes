@@ -1,5 +1,12 @@
 Revision history for Parse-PhoneNumber-ID
 
+0.11    2014-10-16 (PERLANCAR)
+
+	- No functional changes.
+
+	- Add cli script.
+
+
 0.10    2014-02-21 (SHARYANTO)
 
         - Update data: mobile8 is renamed to smartfren since Apr 2011.
