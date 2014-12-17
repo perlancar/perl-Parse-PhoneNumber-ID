@@ -12,6 +12,7 @@ our @EXPORT_OK = qw(extract_id_phones parse_id_phone
 
 use Data::Clone;
 
+# DATE
 # VERSION
 
 # from: http://id.wikipedia.org/wiki/Daftar_kode_telepon_di_Indonesia
@@ -476,6 +477,11 @@ my %fwa_prefixes = (
 );
 
 our %SPEC;
+
+$SPEC{':package'} = {
+    v => 1.1,
+    summary => 'Parse Indonesian phone numbers',
+};
 
 my $extract_args = {
     text => {
@@ -982,7 +988,7 @@ sub _add_info {
 #}
 
 1;
-# ABSTRACT: Parse Indonesian phone numbers
+# ABSTRACT:
 
 =head1 SYNOPSIS
 
