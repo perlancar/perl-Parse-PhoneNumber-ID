@@ -408,24 +408,6 @@ my %cell_prefixes = (
     '0899'  => {operator=>'three',                                   is_gsm=>1},
 );
 
-# TODO: mobile area code, telkomsel (and indosat etc too?)
-#10-14 Jabotabek
-#15-32 Jabar
-#33-38 Jateng
-#39-43 Jatim
-#44-47 BaliNusra
-#48-59 Kalimantan
-#60-68 Sumbagut (Sumatera Bagian Utara)
-#69-74 Sumbagteng (Sumatera Bagian Tengah)
-#75-86 Sumbagsel (Sumatera Bagian Selatan)
-#87-96 Sulawesi
-#97-99 Papua Maluku
-
-# for fwa things are less clear, below is probably incomplete. each city might
-# be different anyway, e.g. 8x (like 87xxxxxx) is used by telkom in jakarta area
-# (east, bekasi, etc) and not esia. things like esia gogo also complicates
-# things.
-
 my %fwa_prefixes = (
     30 => {operator=>'indosat', product=>'starone'},
     32 => {operator=>'telkom', product=>'flexi'},
@@ -1022,14 +1004,6 @@ To extract more than one numbers in a text:
                                         '0812 2345 6789, +62-22-91234567');
  say "There are ", scalar(@$phones), "phone number(s) found in text";
  for (@$phones) { say $_->{pretty} }
-
-
-=head1 TODO
-
-Need to update with more prefixes.
-
-Data needs to be cleaned up (especially city names to city codes) and moved to
-GudangData project.
 
 
 =head1 SEE ALSO
