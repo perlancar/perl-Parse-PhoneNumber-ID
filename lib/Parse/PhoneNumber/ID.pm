@@ -1,19 +1,20 @@
 package Parse::PhoneNumber::ID;
 
+# DATE
+# VERSION
+
 use 5.010001;
 use strict;
 use warnings;
 use Log::Any '$log';
 
+use Function::Fallback::CoreOrPP qw(clone);
+use Perinci::Sub::Util qw(gen_modified_sub);
+
 require Exporter;
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(extract_id_phones parse_id_phone
                     list_id_operators list_id_area_codes);
-
-use Data::Clone;
-
-# DATE
-# VERSION
 
 # from: http://id.wikipedia.org/wiki/Daftar_kode_telepon_di_Indonesia
 # last updated: 2011-03-08
@@ -855,19 +856,17 @@ sub extract_id_phones {
     \@nums;
 }
 
-my $parse_args = clone($extract_args);
-delete $parse_args->{max_numbers};
-$SPEC{parse_id_phone} = {
-    v            => 1.1,
-    summary      => 'Alias for extract_id_phones(..., max_numbers=>1)->[0]',
-    args         => $parse_args,
-    result_naked => 1,
-};
-sub parse_id_phone {
-    my %args = @_;
-    my $res = extract_id_phones(%args, max_numbers=>1);
-    $res->[0];
-}
+gen_modified_sub(
+    output_name => 'parse_id_phone',
+    base_name   => 'extract_id_phones',
+    summary     => 'Alias for extract_id_phones(..., max_numbers=>1)->[0]',
+    remove_args => [qw/max_numbers/],
+    output_code => sub {
+        my %args = @_;
+        my $res = extract_id_phones(%args, max_numbers=>1);
+        $res->[0];
+    },
+);
 
 sub _normalize {
     my ($cc, $area, $local, $ext) = @_;
