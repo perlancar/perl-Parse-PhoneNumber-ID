@@ -1,5 +1,13 @@
 Revision history for Parse-PhoneNumber-ID
 
+0.13    2015-01-04 (PERLANCAR)
+
+	- No functional changes.
+
+	- Avoid using Data::Clone, to avoid depending on non-core XS module
+	  and stay fatpack-friendly.
+
+
 0.12    2015-01-03 (PERLANCAR)
 
 	- No functional changes.
