@@ -3,7 +3,6 @@
 use 5.010;
 use strict;
 use warnings;
-use Log::Any '$log';
 use Test::More 0.98;
 
 use Parse::PhoneNumber::ID qw(extract_id_phones parse_id_phone);

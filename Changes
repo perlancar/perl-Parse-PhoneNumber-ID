@@ -1,5 +1,12 @@
 Revision history for Parse-PhoneNumber-ID
 
+0.14    2015-08-18 (PERLANCAR)
+
+	- No functional changes.
+
+	- Switch from Log::Any to Log::Any::IfLOG.
+
+
 0.13    2015-01-04 (PERLANCAR)
 
 	- No functional changes.
