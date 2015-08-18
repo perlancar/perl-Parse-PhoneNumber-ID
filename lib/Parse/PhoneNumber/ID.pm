@@ -6,7 +6,7 @@ package Parse::PhoneNumber::ID;
 use 5.010001;
 use strict;
 use warnings;
-use Log::Any '$log';
+use Log::Any::IfLOG '$log';
 
 use Function::Fallback::CoreOrPP qw(clone);
 use Perinci::Sub::Util qw(gen_modified_sub);
