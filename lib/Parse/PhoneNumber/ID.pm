@@ -6,7 +6,7 @@ package Parse::PhoneNumber::ID;
 use 5.010001;
 use strict;
 use warnings;
-use Log::Any::IfLOG '$log';
+use Log::ger;
 
 use Function::Fallback::CoreOrPP qw(clone);
 use Perinci::Sub::Util qw(gen_modified_sub);
@@ -533,7 +533,7 @@ sub extract_id_phones {
     my $level = $args{level} // 5;
     my $defac = $args{default_area_code};
 
-    $log->tracef("text = %s", $text);
+    log_trace("text = %s", $text);
 
     my %nums;  # normalized num => {_level=>..., _order=>..., raw=>..., ...}
 
@@ -622,7 +622,7 @@ sub extract_id_phones {
         };
         my $oldtext = $text;
         $text =~ s/((?:\d\s){4,}\d)/$_remove_spaces->($1)/seg;
-        $log->tracef("Preprocess text: remove spaces: %s", $text)
+        log_trace("Preprocess text: remove spaces: %s", $text)
             if $oldtext ne $text;
     }
 
@@ -638,7 +638,7 @@ sub extract_id_phones {
         };
         my $oldtext = $text;
         $text =~ s/((?:[0-9$lets](?:\s+|-|\.)?){5,})/$_replace_lets->($1)/eg;
-        $log->tracef("Preprocess text: letters->digits: %s", $text)
+        log_trace("Preprocess text: letters->digits: %s", $text)
             if $oldtext ne $text;
     }
 
@@ -826,7 +826,7 @@ sub extract_id_phones {
     }
 
     for (keys %nums) { $nums{$_}{standard} = $_ }
-    $log->tracef("\\%%nums = %s", \%nums);
+    log_trace("\\%%nums = %s", \%nums);
 
     # if we are told to extract only N max_numbers, use the lower level ones and
     # the ones at the end (they are more likely to be numbers, in the case of
@@ -851,7 +851,7 @@ sub extract_id_phones {
         _add_info($num);
     }
 
-    $log->tracef("\\\@nums = %s", \@nums);
+    log_trace("\\\@nums = %s", \@nums);
 
     \@nums;
 }
@@ -882,7 +882,7 @@ sub _remove_text {
     for (@$strs) {
         $$textref =~ s/\Q$_\E//;
     }
-    $log->tracef("removed match, text = %s", $$textref)
+    log_trace("removed match, text = %s", $$textref)
         if $$textref ne $oldtext;
 }
 
